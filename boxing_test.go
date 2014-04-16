@@ -72,8 +72,10 @@ func TestNumberBox(t *testing.T) {
 
 func TestObject(t *testing.T) {
 	objectSource := make(Object)
-	objectSource["key1"] = NewNumber(1)
-	objectSource["key2"] = NewNumber(2)
+	b1 := NewNumber(1)
+	b2 := NewNumber(2)
+	objectSource["key1"] = b1
+	objectSource["key2"] = b2
 
 	objectBox := NewObject(objectSource)
 	if false == math.IsNaN(float64(objectBox)) {
@@ -83,10 +85,17 @@ func TestObject(t *testing.T) {
 	if len(objectSource) != len(objectTarget) {
 		t.Error("objectTarget and objectSource should have the same length")
 	}
-	if 1 != objectTarget["key1"].ToNumber() {
+
+	// To address elements in the map we have to go through a temporary variable
+	// This is why the test set back to original variables the entries from the
+	// objectTarget
+	// objectTarget["key1"].ToNumber() or objectTarget["key2"].ToNumber() are forbidden
+	b1 = objectTarget["key1"]
+	b2 = objectTarget["key2"]
+	if 1 != b1.ToNumber() {
 		t.Error("objectTarget[\"key1\"] should be equal to objectSource[\"key1\"")
 	}
-	if 2 != objectTarget["key2"].ToNumber() {
+	if 2 != b2.ToNumber() {
 		t.Error("objectTarget[\"key2\"] should be equal to objectSource[\"key2\"")
 	}
 }

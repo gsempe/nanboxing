@@ -52,24 +52,20 @@ const (
 /*
  String prints a Box
 */
-func (x Box) String() string {
-	return fmt.Sprintf("Box is %X, address is %v\n", *(*uint64)(unsafe.Pointer(&x)), (*uint64)(unsafe.Pointer(&x)))
+func (x *Box) String() string {
+	return fmt.Sprintf("Box is %X, address is %v\n", *(*uint64)(unsafe.Pointer(x)), (*uint64)(unsafe.Pointer(x)))
 }
 
 /*
  Tag retrieve the tag of a box
 */
-func (x Box) Tag() Tag {
-	return Tag(((*(*uint64)(unsafe.Pointer(&x))) >> TagShift) & TagMask)
+func (x *Box) Tag() Tag {
+	return Tag(((*(*uint64)(unsafe.Pointer(x))) >> TagShift) & TagMask)
 }
 
 /*
  SetTag change the tag of a box
 */
-// func (x Box) SetTag(t Tag) Box {
-// 	ui64 := NaNMask | (uint64(t) << TagShift) | (x.Payload() & PayloadMask)
-// 	return *(*Box)(unsafe.Pointer(&ui64))
-// }
 func (x *Box) SetTag(t Tag) {
 	ui64 := (NaNMask | (uint64(t) << TagShift) | (x.Payload() & PayloadMask))
 	*x = *(*Box)(unsafe.Pointer(&ui64))
@@ -78,13 +74,13 @@ func (x *Box) SetTag(t Tag) {
 /*
  Payload retrieve the payload of a box
 */
-func (x Box) Payload() uint64 {
-	return (*(*uint64)(unsafe.Pointer(&x))) & PayloadMask
+func (x *Box) Payload() uint64 {
+	return (*(*uint64)(unsafe.Pointer(x))) & PayloadMask
 }
 
-func (x Box) SetPayload(u uint64) Box {
+func (x *Box) SetPayload(u uint64) {
 	ui64 := NaNMask | (uint64(x.Tag()) << TagShift) | (u & PayloadMask)
-	return *(*Box)(unsafe.Pointer(&ui64))
+	*x = *(*Box)(unsafe.Pointer(&ui64))
 }
 
 /*
@@ -97,15 +93,15 @@ func NewFloat(f float64) Box {
 /*
  ToFloat retrieve the float value of a box
 */
-func (x Box) ToFloat() float64 {
-	return float64(x)
+func (x *Box) ToFloat() float64 {
+	return float64(*x)
 }
 
 /*
  IsFloat64 test if a box type is float
 */
-func (x Box) IsFloat64() bool {
-	return !math.IsNaN(float64(x))
+func (x *Box) IsFloat64() bool {
+	return !math.IsNaN(float64(*x))
 }
 
 /*
@@ -120,14 +116,14 @@ func NewNumber(n int32) Box {
 /*
  ToNumber retrieve the int32 value of a box
 */
-func (x Box) ToNumber() int32 {
+func (x *Box) ToNumber() int32 {
 	return int32(x.Payload())
 }
 
 /*
  IsNumber test if a box type is number
 */
-func (x Box) IsNumber() bool {
+func (x *Box) IsNumber() bool {
 	return !x.IsFloat64() && (x.Tag() == TagNumber)
 }
 
@@ -145,14 +141,14 @@ func NewString(s string) Box {
 /*
  ToString retrieve the string pointer of a box
 */
-func (x Box) ToString() string {
+func (x *Box) ToString() string {
 	return *(*string)(unsafe.Pointer(uintptr(x.Payload())))
 }
 
 /*
  IsString Test if a box type is String
 */
-func (x Box) IsString() bool {
+func (x *Box) IsString() bool {
 	return !x.IsFloat64() && (x.Tag() == tagString)
 }
 
@@ -171,14 +167,14 @@ func NewBool(b bool) Box {
 /*
  ToBool retrieve the bool value of a box
 */
-func (x Box) ToBool() bool {
+func (x *Box) ToBool() bool {
 	return !(0 == x.Payload())
 }
 
 /*
  IsBool test if a box type is bool
 */
-func (x Box) IsBool() bool {
+func (x *Box) IsBool() bool {
 
 	return !x.IsFloat64() && (x.Tag() == TagBool)
 }
@@ -197,14 +193,14 @@ func NewArray(a Array) Box {
 /*
  ToArray retrieve the array pointer of a box
 */
-func (x Box) ToArray() Array {
+func (x *Box) ToArray() Array {
 	return *(*Array)(unsafe.Pointer(uintptr(x.Payload())))
 }
 
 /*
  IsArray test if a box type is array
 */
-func (x Box) IsArray() bool {
+func (x *Box) IsArray() bool {
 	return !x.IsFloat64() && (x.Tag() == TagArray)
 }
 
@@ -222,14 +218,14 @@ func NewObject(o Object) Box {
 /*
  ToObject retrieve the object pointer of a box
 */
-func (x Box) ToObject() Object {
+func (x *Box) ToObject() Object {
 	return *(*Object)(unsafe.Pointer(uintptr(x.Payload())))
 }
 
 /*
  IsObject tests if a box type is object
 */
-func (x Box) IsObject() bool {
+func (x *Box) IsObject() bool {
 	return !x.IsFloat64() && (x.Tag() == TagObject)
 }
 
@@ -244,24 +240,24 @@ func NewNull() Box {
 /*
  ToNull return nil, always nil
 */
-func (x Box) ToNull() unsafe.Pointer {
+func (x *Box) ToNull() unsafe.Pointer {
 	return nil
 }
 
 /*
  IsNull tests if a box is null
 */
-func (x Box) IsNull() bool {
+func (x *Box) IsNull() bool {
 	return !x.IsFloat64() && (x.Tag() == TagNull)
 }
 
 /*
  IsPointer tests if a box is a pointer
 */
-func (x Box) IsPointer() bool {
+func (x *Box) IsPointer() bool {
 	return !x.IsFloat64() && ((x.Tag() == TagArray) || (x.Tag() == TagObject))
 }
 
-func (x Box) ToPointer() uintptr {
+func (x *Box) ToPointer() uintptr {
 	return uintptr(x.Payload())
 }
