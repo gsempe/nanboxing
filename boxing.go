@@ -53,7 +53,7 @@ const (
  String prints a Box
 */
 func (x *Box) String() string {
-	return fmt.Sprintf("Box is %X, address is %v\n", *(*uint64)(unsafe.Pointer(x)), (*uint64)(unsafe.Pointer(x)))
+	return fmt.Sprintf("Box is %X, address is 0x%X\n", *(*uint64)(unsafe.Pointer(x)), (*uint64)(unsafe.Pointer(x)))
 }
 
 /*
