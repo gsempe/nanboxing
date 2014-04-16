@@ -156,11 +156,8 @@ func (x *Box) IsString() bool {
  NewBool create a bool box
 */
 func NewBool(b bool) Box {
-	// fmt.Printf("ui 1 is %X address is %v\n", b, &b)
 	ui := *(*uint8)(unsafe.Pointer(&b))
-	// fmt.Printf("ui 2 is %X address is %v\n", ui, &ui)
 	ui64 := NaNMask | (uint64(TagBool) << TagShift) | (uint64(ui) & PayloadMask)
-	// fmt.Printf("ui 3 is %X address is %v\n", ui64, &ui64)
 	return *(*Box)(unsafe.Pointer(&ui64))
 }
 
