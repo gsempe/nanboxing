@@ -127,12 +127,12 @@ func TestTag(t *testing.T) {
 	if TagNumber != tag {
 		t.Errorf("The tag should be Number, box value %x.")
 	}
-	(&maxPositiveBox).SetTag(tagString)
+	maxPositiveBox.SetTag(tagString)
 	tag = maxPositiveBox.Tag()
 	if tagString != tag {
 		t.Errorf("The tag should be String, box value %x.")
 	}
-	(&maxPositiveBox).SetTag(TagNumber)
+	maxPositiveBox.SetTag(TagNumber)
 	tag = maxPositiveBox.Tag()
 	if math.MaxInt32 != maxPositiveBox.ToNumber() {
 		t.Errorf("maxPositiveBox value should be %d", math.MaxInt32)
