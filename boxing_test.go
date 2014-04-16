@@ -141,8 +141,16 @@ func TestTag(t *testing.T) {
 
 func TestPayload(t *testing.T) {
 	maxPositiveBox := NewNumber(math.MinInt32)
-	maxPositiveBox = maxPositiveBox.SetPayload(uint64(math.MaxInt32))
-
+	if math.MinInt32 != maxPositiveBox.ToNumber() {
+		t.Errorf("maxPositiveBox value should be %d", math.MinInt32)
+	}
+	maxPositiveBox.SetPayload(uint64(math.MaxInt32))
+	if TagNumber != maxPositiveBox.Tag() {
+		t.Errorf("The tag should be Number, box value %x.")
+	}
+	if math.MaxInt32 != maxPositiveBox.ToNumber() {
+		t.Errorf("maxPositiveBox value should be %d", math.MaxInt32)
+	}
 }
 
 func TestIs(t *testing.T) {
